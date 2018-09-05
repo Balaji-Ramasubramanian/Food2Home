@@ -5,6 +5,11 @@ class MessengerBot
       "content_type": 'text',
       "title": 'Menu',
       "payload": 'MENU'
+    },
+    {
+      "content_type": 'text',
+      "title": 'View my cart',
+      "payload": 'VIEW_MY_CART'
     }
   ]
 

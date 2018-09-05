@@ -41,8 +41,7 @@ class MessengerBot
 				user = User.find_by_facebook_userid(id)
 				user.step_number = "0"
 				user.save
-				say(id,"Item added to the cart! \nyou can confirm your order by clicking View my cart -> Make this order \nOr continue adding food to cart")
-				# show_cart(id)
+				say(id,"#{item_to_add} is added to the cart! \nyou can confirm your order by clicking View my cart -> Place order \nOr continue adding food to cart")
 			end
 		else
 			say(id,"The #{item_to_add} is not available right now! could you make any other order?")
@@ -65,7 +64,7 @@ class MessengerBot
 			end
 			cart.items_in_the_cart = new_items
 			cart.save
-			say(id,"Okay, I have removed #{item_to_remove} from your cart!")
+			say(id,"Okay, #{item_to_remove} removed from your cart!")
 			# show_cart(id)
 		end
 	end

@@ -5,7 +5,7 @@ class Cart < ActiveRecord::Migration[5.2]
   		t.string :items_in_the_cart
       t.string :phone_number
       t.string :full_address
-  		t.string :status
+  		t.string :order_status
     end
   end
 

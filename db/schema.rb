@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(version: 2018_09_02_152052) do
     t.string "items_in_the_cart"
     t.string "phone_number"
     t.string "full_address"
-    t.string "status"
+    t.string "order_status"
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

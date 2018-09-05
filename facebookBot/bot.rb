@@ -204,7 +204,6 @@ class MessengerBot
 	#Method to handle wit response
 	def self.handle_wit_response(id,message_text)
 		wit_response = Wit.new.get_intent(message_text)
-		puts wit_response
 		if wit_response.class == String then
 			call_postback(id,wit_response)
 		else
@@ -294,7 +293,6 @@ class MessengerBot
 	end
 
 	def self.add_item_with_quantity(id,entity)
-		puts "inside add_item_with_quantity"
 		if entity.has_key?("intent") && entity.has_key?("number") then
 			item_to_add = entity["intent"][0]["value"].gsub("ADD_WITH_QUANTITY_","")
 			item_to_add = item_to_add.gsub("ADD_TO_CART_","")

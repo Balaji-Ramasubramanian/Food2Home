@@ -19,7 +19,7 @@ class MessengerBot
   QUICK_REPLIES_ORDER = [
     {
     "content_type": 'text',
-    "title": 'Make this Order',
+    "title": 'Place Order',
     "payload": 'ORDER'
     },
     {

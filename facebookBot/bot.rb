@@ -215,6 +215,7 @@ class MessengerBot
 	#Method to handle postbacks
 	def self.call_postback(id,postback_payload)
 		typing_on(id)
+		user = User.find_by_facebook_userid(id)
 		case postback_payload
 		when "GET_STARTED"
 			get_profile(id)
@@ -269,6 +270,8 @@ class MessengerBot
 		else
 			handle_cart_postbacks(id,postback_payload)
 		end
+		user.step_number = "0"
+		user.save
 	end
 
 	def self.handle_cart_postbacks(id,postback_payload)
@@ -294,6 +297,7 @@ class MessengerBot
 		puts "inside add_item_with_quantity"
 		if entity.has_key?("intent") && entity.has_key?("number") then
 			item_to_add = entity["intent"][0]["value"].gsub("ADD_WITH_QUANTITY_","")
+			item_to_add = item_to_add.gsub("ADD_TO_CART_","")
 			quantity = entity["number"][0]["value"]
 			add_item_to_cart(id,item_to_add,quantity)
 		else

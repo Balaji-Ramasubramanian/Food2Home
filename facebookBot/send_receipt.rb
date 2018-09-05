@@ -30,15 +30,15 @@ class MessengerBot
 			template[:attachment][:payload][:address][:postal_code] = postal_code
 			template[:attachment][:payload][:summary][:total_cost] = subtotal_cost.to_i + total_tax.to_i + shipping_cost.to_i 
 			post_template(id,template)
-			cart.status = "Preparing"
+			cart.order_status = "Preparing"
 		end
 		cart.save
 	end
 
 	def self.show_status(id)
 		cart = Cart.find_by_facebook_userid(id)
-		status = cart.status
-		if status != nil then
+		order_status = cart.order_status
+		if order_status != nil then
 			template = GENERIC_TEMPLATE_BODY
 			buttons = [
 			            	{
@@ -49,9 +49,9 @@ class MessengerBot
 			        ]
 			element = [{
 						"title": "Order Number " + "#{id}",
-			            "subtitle": "Status: "+ status
+			            "subtitle": "Status: "+ order_status
 			 		}]
-			element[0]["buttons"] = buttons if status == "Preparing"
+			element[0]["buttons"] = buttons if order_status == "Preparing"
 		    template[:attachment][:payload][:elements] = element
 		    say(id,"Here is your order details")
 		    post_template(id,template)

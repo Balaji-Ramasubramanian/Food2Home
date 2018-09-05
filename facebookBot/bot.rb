@@ -260,7 +260,7 @@ class MessengerBot
 			say(id,"Please enter your street name,")
 		when "STATUS_OF_MY_ORDER"
 			cart = Cart.find_by_facebook_userid(id)
-			if cart.status != nil then
+			if cart.order_status != nil then
 				send_receipt(id)
 				show_status(id)
 			else
@@ -269,7 +269,7 @@ class MessengerBot
 		else
 			handle_cart_postbacks(id,postback_payload)
 		end
-		user.step_number = "0"
+		user.step_number = "0" if user != nil
 		user.save
 	end
 

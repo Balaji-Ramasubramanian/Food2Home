@@ -23,7 +23,7 @@ class MessengerBot
 		user.step_number = "0"
 		cart = Cart.find_by_facebook_userid(id)
 		cart.items_in_the_cart = nil
-		cart.status = nil
+		cart.order_status = nil
 		cart.save
 		user.save
 	end

@@ -11,9 +11,10 @@ class MessengerBot
 		items = items_in_the_cart.split(",") if items_in_the_cart != nil
 		if items == nil then
 		 	say(id,"Your cart is empty")
-		 elsif cart.status != nil then
+		 elsif cart.order_status != nil then
 		 	say(id,"Your Order is being preparing. We will delivered to you shortly!")
 		else 
+			say(id,"Here is your cart,")
 			(0..9).each { |i|
 				break if i > items.length-1
 				item = items[i].split("-")

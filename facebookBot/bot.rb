@@ -219,7 +219,7 @@ class MessengerBot
 		when "GET_STARTED"
 			get_profile(id)
 			create_user(id)
-			say(id,"Hey #{@first_name} #{@last_name}!")
+			say(id,"Hey #{@first_name} #{@last_name} welcome to Food2Home. I am here to assist you on food ordering.")
 			send_quick_reply(id,"How can I help you?",QUICK_REPLIES)
 		when "HI"
 			say(id,"Hi #{@first_name} #{@last_name} Glad to see you!")
@@ -257,14 +257,14 @@ class MessengerBot
 			user = User.find_by_facebook_userid(id)
 			user.step_number = "4_street_name"
 			user.save
-			say(id,"Please enter your Street name,")
+			say(id,"Please enter your street name,")
 		when "STATUS_OF_MY_ORDER"
 			cart = Cart.find_by_facebook_userid(id)
 			if cart.status != nil then
 				send_receipt(id)
 				show_status(id)
 			else
-				say(id,"There is no pending order!")
+				say(id,"There is no pending order right now!")
 			end
 		else
 			handle_cart_postbacks(id,postback_payload)
@@ -288,7 +288,7 @@ class MessengerBot
 			user.save
 		else
 			say(id,"I can't understand that!")
-			send_quick_reply(id,"Would you like to see the menu?",QUICK_REPLIES)
+			send_quick_reply(id,"How can I help you?",QUICK_REPLIES)
 		end
 	end
 

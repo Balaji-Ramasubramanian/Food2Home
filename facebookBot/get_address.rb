@@ -3,7 +3,7 @@ require_relative './bot'
 class MessengerBot
 
 	def self.get_address_details(id)
-		say(id,"Enter your phone number,")
+		say(id,"Enter your phone number")
 		cart = Cart.find_by_facebook_userid(id)
 		user = User.find_by_facebook_userid(id)
 		if cart == nil then
@@ -15,7 +15,7 @@ class MessengerBot
 	end
 
 	def self.show_confirmation_message(id)
-		send_quick_reply(id,"Make this Order?",QUICK_REPLIES_CONFIRM_ORDER)
+		send_quick_reply(id,"Are you sure to place this Order?",QUICK_REPLIES_CONFIRM_ORDER)
 	end
 
 	def self.cancel_order(id)

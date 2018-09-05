@@ -195,9 +195,6 @@ class MessengerBot
 		when "menu"
 			say(id,"Here is the menu,")
 			send_menu(id)
-		when "offers"
-			say(id,"we'll update offers soon!")
-
 		else
 			handle_wit_response(id,message_text)
 		end
@@ -206,8 +203,13 @@ class MessengerBot
 
 	#Method to handle wit response
 	def self.handle_wit_response(id,message_text)
-		intent = Wit.new.get_intent(message_text)
-		call_postback(id,intent)
+		wit_response = Wit.new.get_intent(message_text)
+		puts wit_response
+		if wit_response.class == String then
+			call_postback(id,wit_response)
+		else
+			add_item_with_quantity(id,wit_response)
+		end
 	end
 
 	#Method to handle postbacks
@@ -225,6 +227,8 @@ class MessengerBot
 		when "MENU"
 			say(id,"Here is the menu,")
 			send_menu(id)
+		when "OFFERS"
+			say(id,"Currently no offers available. I'll tell you about offers if available")
 		when "VIEW_MY_CART"
 			show_cart(id)
 		when "ORDER"
@@ -282,9 +286,19 @@ class MessengerBot
 			user.save
 		else
 			say(id,"I can't understand that!")
-			send_quick_reply(id,"How can I help you",QUICK_REPLIES)
+			send_quick_reply(id,"Would you like to see the menu?",QUICK_REPLIES)
 		end
 	end
 
+	def self.add_item_with_quantity(id,entity)
+		puts "inside add_item_with_quantity"
+		if entity.has_key?("intent") && entity.has_key?("number") then
+			item_to_add = entity["intent"][0]["value"].gsub("ADD_WITH_QUANTITY_","")
+			quantity = entity["number"][0]["value"]
+			add_item_to_cart(id,item_to_add,quantity)
+		else
+			say(id,"Couldn't understand that!")
+		end
+	end
 
 end

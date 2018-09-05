@@ -1,5 +1,36 @@
-# Food2Home
-This is a Facebook Messenger chatbot that helps users to order food through their messenger app.
+# Food2Home [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+This is a Facebook Messenger chatbot template for restaurants. Restaurants can make use of this project and they can deploy it in their own servers to provide their service.
+
+## Overview
+Using this bot the users can do the following,
+- View the menu
+- Add/remove food to cart
+- View the receipt
+- Track their order
+
+## How a user can use the bot?
+> **Note:** This chatbot is currently in development phase, So before start using this chatbot, you need to be in the testers list of this bot. Just send an E-mail to balaji030698@gmail.com with your Facebook profile URL, I will add you to the testers list. You will get an invite notification through Facebook. After accepting the invitation, You can start using this bot.
+
+> Once the chatbot is published, Every Facebook user can access it without requesting for the test user access.
+
+The demo chatbot is currently deployed in the page https://www.facebook.com/Food2HomeBot
+
+- Open the url https://m.me/Food2HomeBot.
+- Click on the *GET STARTED* button to start the conversation.
+- You can use the menu present in the chat to send messages quickly.
+
+
+Since this bot using Natural Language Processing(NLP), The users can converse with the bot using their own phrases.
+
+The sample phrases that users can use,
+- Show me the menu
+- Add five Pizzas to the cart
+- Show me my cart
+- Remove burger from cart 
+- Can you show me the menu?
+- Place this order
+- Show me the receipt
+- What is the status of my order?
 
 # For developers
 

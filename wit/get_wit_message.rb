@@ -2,10 +2,10 @@ require 'wit'
 
 class Wit
 
-	#Method to get entities from wit server
-	def get_intent(word)
+	# Method to get entities from wit server
+	def get_intent(phrase)
 		client = Wit.new(access_token: ENV["WIT_ACCESS_TOKEN"])
-		response = client.message(word)
+		response = client.message(phrase)
 
 		if response["entities"]["intent"] != nil then
 			if response["entities"].length >1 then

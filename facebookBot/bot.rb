@@ -199,16 +199,15 @@ class MessengerBot
 			say(id,"we'll update offers soon!")
 
 		else
-			# handle_wit_response(id,message_text)
-			say(id,"couldn't understand that wit yet to be integrated")
+			handle_wit_response(id,message_text)
 		end
 		
 	end
 
 	#Method to handle wit response
 	def self.handle_wit_response(id,message_text)
-		
-
+		intent = Wit.new.get_intent(message_text)
+		call_postback(id,intent)
 	end
 
 	#Method to handle postbacks
@@ -229,7 +228,12 @@ class MessengerBot
 		when "VIEW_MY_CART"
 			show_cart(id)
 		when "ORDER"
-			get_address_details(id)
+			cart = Cart.find_by_facebook_userid(id)
+			if cart.items_in_the_cart == nil then
+				send_menu(id)
+			else
+				get_address_details(id)
+			end
 		when "ADD_MORE_FOOD"
 			say(id,"Sure! Here is the menu,")
 			send_menu(id)
@@ -278,6 +282,7 @@ class MessengerBot
 			user.save
 		else
 			say(id,"I can't understand that!")
+			send_quick_reply(id,"How can I help you",QUICK_REPLIES)
 		end
 	end
 

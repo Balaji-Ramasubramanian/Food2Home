@@ -33,7 +33,7 @@ class MessengerBot
 			end
 			
 			if old_item then 
-				edit_quantity(id,item_to_add,quantity)
+				edit_quantity(id,item_to_add,quantity.to_s)
 			else
 				cart.items_in_the_cart +=  "," + "#{item_to_add}-#{quantity}-#{total_price}" if cart.items_in_the_cart != nil
 				cart.items_in_the_cart = "#{item_to_add}-#{quantity}-#{total_price}" if cart.items_in_the_cart == nil
@@ -41,11 +41,12 @@ class MessengerBot
 				user = User.find_by_facebook_userid(id)
 				user.step_number = "0"
 				user.save
-				say(id,"Item successfully added to the cart! you can confirm your order by clicking View my cart -> Make this order\nOr continue adding food to cart")
+				say(id,"Item added to the cart! \nyou can confirm your order by clicking View my cart -> Make this order \nOr continue adding food to cart")
 				# show_cart(id)
 			end
 		else
-			say(id,"internal error! price didn't present in the menu")
+			say(id,"The #{item_to_add} is not available right now! could you make any other order?")
+			send_menu(id)
 		end
 	end
 
@@ -64,7 +65,7 @@ class MessengerBot
 			end
 			cart.items_in_the_cart = new_items
 			cart.save
-			say(id,"#{item_to_remove} successfully removed from your cart!")
+			say(id,"Okay, I have removed #{item_to_remove} from your cart!")
 			# show_cart(id)
 		end
 	end
@@ -88,7 +89,7 @@ class MessengerBot
 			end
 			cart.items_in_the_cart = new_items
 			cart.save
-			say(id,"#{item_to_edit} quantity edited as #{qty} in the cart")
+			say(id,"#{item_to_edit} quantity changed as #{qty} in the cart")
 			show_cart(id)
 			user = User.find_by_facebook_userid(id)
 			user.step_number = "0"

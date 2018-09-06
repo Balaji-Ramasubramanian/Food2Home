@@ -1,6 +1,8 @@
 # Food2Home [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 This is a Facebook Messenger chatbot template for restaurants. Restaurants can make use of this project by deploying it in their own servers to provide the Messenger chatbot based food ordering.
 
+You can see this bot in action at this [video](https://youtu.be/q73-J28c364)
+
 ## Overview
 Using this bot the users can do the following,
 - View the menu

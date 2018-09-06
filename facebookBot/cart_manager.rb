@@ -46,7 +46,7 @@ class MessengerBot
 				user = User.find_by_facebook_userid(id)
 				user.step_number = "0"
 				user.save
-				say(id,"#{item_to_add} is added to the cart! \nyou can confirm your order by clicking View my cart -> Place order \nOr continue adding food to cart")
+				say(id,"#{quantity} #{item_to_add} is added to the cart! \nyou can confirm your order by clicking View my cart -> Place order \nOr continue adding food to cart")
 			end
 		else
 			say(id,"The #{item_to_add} is not available right now! could you make any other order?")
@@ -58,11 +58,13 @@ class MessengerBot
 		end
 	end
 
-	def self.remove_item_from_cart(id,item_to_remove)
+	def self.remove_item_from_cart(id,item_to_remove,quantity = "remove_all")
 		cart = Cart.find_by_facebook_userid(id)
 		items_in_the_cart = cart.items_in_the_cart
 		items = items_in_the_cart.split(",") if items_in_the_cart != nil
 		new_items = nil
+		is_decremented = false
+		qty_after_decremented = nil
 		if items == nil then
 			say(id,"Your cart is empty!")
 		else
@@ -70,12 +72,21 @@ class MessengerBot
 				item_elements = i.split("-")
 				new_items += "," + i if new_items != nil && item_elements[0] !=item_to_remove
 				new_items = i if new_items == nil && item_elements[0] !=item_to_remove
+				if  quantity != "remove_all" && item_elements[0] == item_to_remove then 
+					item_elements[1] = item_elements[1].to_i - quantity.to_i
+					qty_after_decremented = item_elements[1]
+					i = item_elements[0] + "-" + item_elements[1].to_s + "-" + item_elements[2]
+					new_items += "," + i if item_elements[1] > 0 && new_items != nil
+					new_items = i if item_elements[1] > 0 && new_items == nil
+					is_decremented = true
+				end
 			end
 			cart.items_in_the_cart = new_items
 			cart.order_status = nil if cart.order_status == "Preparing"
 			cart.save
-			say(id,"Okay, #{item_to_remove} removed from your cart!")
-			# show_cart(id)
+			say(id,"Okay, #{item_to_remove} removed from your cart!") if is_decremented == false || qty_after_decremented <0
+			say(id,"Okay, Now you have #{qty_after_decremented} #{item_to_remove} in your cart") if is_decremented == true && qty_after_decremented >0
+			
 		end
 	end
 

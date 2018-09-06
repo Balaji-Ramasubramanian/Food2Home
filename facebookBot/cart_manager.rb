@@ -28,7 +28,11 @@ class MessengerBot
 			if items != nil then
 				items.each do |i|
 					item_elements = i.split("-")
-					old_item = true if item_elements[0] == item_to_add
+					if item_elements[0] == item_to_add then 
+						old_item = true 
+						old_quantity = item_elements[1] 
+						quantity = old_quantity.to_i + quantity.to_i 
+					end
 				end
 			end
 			
@@ -37,6 +41,7 @@ class MessengerBot
 			else
 				cart.items_in_the_cart +=  "," + "#{item_to_add}-#{quantity}-#{total_price}" if cart.items_in_the_cart != nil
 				cart.items_in_the_cart = "#{item_to_add}-#{quantity}-#{total_price}" if cart.items_in_the_cart == nil
+				cart.order_status = nil if cart.order_status == "Preparing"
 				cart.save
 				user = User.find_by_facebook_userid(id)
 				user.step_number = "0"
@@ -67,6 +72,7 @@ class MessengerBot
 				new_items = i if new_items == nil && item_elements[0] !=item_to_remove
 			end
 			cart.items_in_the_cart = new_items
+			cart.order_status = nil if cart.order_status == "Preparing"
 			cart.save
 			say(id,"Okay, #{item_to_remove} removed from your cart!")
 			# show_cart(id)
@@ -81,18 +87,22 @@ class MessengerBot
 		if items == nil then
 			say(id,"Your cart is empty!")
 		else
+			changed = false
 			items.each do |i|
 				item_elements = i.split("-")
 				if item_elements[0] == item_to_edit then
 					item_elements [2] = ((item_elements[2].to_i / item_elements[1].to_i) * qty.to_i).to_s
-					i = item_elements[0] + "-" + qty + "-" + item_elements[2]
+					i = item_elements[0] + "-" + qty.to_s + "-" + item_elements[2]
+					changed = true
 				end
 				new_items += "," + i if new_items != nil
 				new_items = i if new_items == nil
 			end
 			cart.items_in_the_cart = new_items
+			cart.order_status = nil if cart.order_status == "Preparing"
 			cart.save
-			say(id,"#{item_to_edit} quantity changed as #{qty} in the cart")
+			say(id,"Okay, Now you have #{qty} #{item_to_edit}s in your cart") if changed == true
+			say(id,"Sorry, There is no #{item_to_edit} in your cart.") if changed == false
 			show_cart(id)
 			user = User.find_by_facebook_userid(id)
 			user.step_number = "0"

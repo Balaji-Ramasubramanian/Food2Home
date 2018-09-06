@@ -32,7 +32,20 @@ class MessengerBot
 		"text" => "Coke 1/2 litre @ Rs. 70",
 		"price" => "70",
 		"image_url" => "https://previews.123rf.com/images/olegdudko/olegdudko1508/olegdudko150806725/43800440-coke-.jpg"
+		},
+		{
+		"title" => "Briyani",
+		"text" => "Briyani @ Rs. 180",
+		"price" => "180",
+		"image_url" => "https://previews.123rf.com/images/yuliang11/yuliang111305/yuliang11130500070/19384076-biryani-mutton-rice-papadam-with-traditional-background.jpg"
+		},
+		{
+		"title" => "Fried Rice",
+		"text" => "Fried Rice @ Rs. 120",
+		"price" => "120",
+		"image_url" => "https://previews.123rf.com/images/fotek/fotek1806/fotek180600065/103217813-fried-rice-with-shrimp-and-vegetables-on-a-frying-pan-popular-chinese-dish.jpg"
 		}
+		
 	]
 
 end

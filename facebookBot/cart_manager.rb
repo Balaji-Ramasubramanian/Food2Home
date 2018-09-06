@@ -45,6 +45,10 @@ class MessengerBot
 			end
 		else
 			say(id,"The #{item_to_add} is not available right now! could you make any other order?")
+			say(id,"Here is the menu,")
+			user = User.find_by_facebook_userid(id)
+			user.step_number = "0"
+			user.save
 			send_menu(id)
 		end
 	end

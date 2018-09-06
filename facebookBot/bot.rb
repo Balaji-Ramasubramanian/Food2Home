@@ -103,7 +103,7 @@ class MessengerBot
 		# 	send_receipt(id)
 		# end
 		user = User.find_by_facebook_userid(id)
-		step_number = user.step_number
+		step_number = user.step_number if user != nil
 
 		if step_number.include?("1") then
 			item = user.step_number.gsub("1_","")
@@ -207,7 +207,7 @@ class MessengerBot
 		if wit_response.class == String then
 			call_postback(id,wit_response)
 		else
-			add_item_with_quantity(id,wit_response)
+			handle_wit_entity(id,wit_response)
 		end
 	end
 
@@ -266,6 +266,9 @@ class MessengerBot
 			else
 				say(id,"There is no pending order right now!")
 			end
+		when "HELP"
+			say(id,"Hi, I'm a food ordering bot. I will help you to order food")
+			say(id,"You can use phrases such as, \n->Show me the menu \n->Add five pizzas to my cart \n->Remove Burgers from the cart \n->Show me the cart")
 		else
 			handle_cart_postbacks(id,postback_payload)
 		end
@@ -274,7 +277,7 @@ class MessengerBot
 	end
 
 	def self.handle_cart_postbacks(id,postback_payload)
-		if postback_payload.include?("ADD_TO_CART") then
+		if postback_payload.include?("ADD_TO_CART_") then
 			item = postback_payload.gsub("ADD_TO_CART_","")
 			ask_quantity(id,item)
 		elsif postback_payload.include?("REMOVE_FROM_CART") then
@@ -292,12 +295,40 @@ class MessengerBot
 		end
 	end
 
-	def self.add_item_with_quantity(id,entity)
-		if entity.has_key?("intent") && entity.has_key?("number") then
-			item_to_add = entity["intent"][0]["value"].gsub("ADD_WITH_QUANTITY_","")
-			item_to_add = item_to_add.gsub("ADD_TO_CART_","")
-			quantity = entity["number"][0]["value"]
-			add_item_to_cart(id,item_to_add,quantity)
+	def self.handle_wit_entity(id,entity)
+
+		# add item with quantity **(check whether working)**
+		if entity.has_key?("intent") && entity.has_key?("item") && entity.has_key?("number") then
+			if entity["intent"][0]["value"] == "ADD_TO_CART" then 
+				item_to_add = entity["item"][0]["value"].split.map(&:capitalize).join(' ') # Capitalize every word in the string
+				quantity = entity["number"][0]["value"]
+				add_item_to_cart(id,item_to_add,quantity)
+			else
+				say(id,"Couldn't understand that!")
+			end
+
+		# handle add to cart without quantity
+		elsif entity.has_key?("intent") && entity.has_key?("item") then
+			if entity["intent"][0]["value"] == "ADD_TO_CART" then
+				item_to_add = entity["item"][0]["value"].split.map(&:capitalize).join(' ')
+				user = User.find_by_facebook_userid(id)
+				user.step_number = "1_"+item_to_add
+				user.save
+				say(id,"Please enter the quantity of #{item_to_add} you want,")
+			elsif entity["intent"][0]["value"] == "REMOVE_FROM_CART" then
+				item_to_remove = entity["item"][0]["value"].split.map(&:capitalize).join(' ')
+				remove_item_from_cart(id,item_to_remove)
+
+			elsif entity["intent"][0]["value"].include?("ADD_TO_CART_") then
+				item_to_add = entity["intent"][0]["value"].gsub("ADD_TO_CART_","")
+				ask_quantity(id,item_to_add)
+			end
+			# elsif entity.has_key?("intent") && entity.has_key?("number") then
+			# 	item_to_add = entity["intent"][0]["value"].gsub("ADD_WITH_QUANTITY_","")
+			# 	item_to_add = item_to_add.gsub("ADD_TO_CART_","")
+			# 	quantity = entity["number"][0]["value"]
+			# 	add_item_to_cart(id,item_to_add,quantity)
+
 		else
 			say(id,"Couldn't understand that!")
 		end

@@ -2,8 +2,13 @@ require_relative './bot'
 require_relative './send_menu'
 require_relative './json_templates/receipt_template'
 
+# @author Balaji
 class MessengerBot
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @return [nil].
+ 	# Mehod to show the receipt to the user
+ 	#
 	def self.send_receipt(id)
 		profile_details = get_profile(id)
 		template = RECEIPT_TEMPLATE_BODY
@@ -35,6 +40,10 @@ class MessengerBot
 		cart.save
 	end
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @return [nil].
+ 	# To show the status to th user.
+ 	#
 	def self.show_status(id)
 		cart = Cart.find_by_facebook_userid(id)
 		order_status = cart.order_status
@@ -60,6 +69,10 @@ class MessengerBot
 		end
 	end
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @return [nil].
+ 	# Mehod to find the total cost for the user's order.
+ 	#
 	def self.find_total_cost(id)
 		cart = Cart.find_by_facebook_userid(id)
 		items_in_the_cart = cart.items_in_the_cart
@@ -72,6 +85,10 @@ class MessengerBot
 		return total_cost
 	end
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @return [nil].
+ 	# Method to get cart elements.
+ 	#
 	def self.get_cart_elements(id)
 		elements = []
 		cart = Cart.find_by_facebook_userid(id)
@@ -94,6 +111,10 @@ class MessengerBot
         return elements
 	end
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @return [nil].
+ 	# Method to find the image URL of the food item from the MENU_ITEMS object.
+ 	#
 	def self.get_image_url(item_name)
 		image_url = nil
 		MENU_ITEMS.each do |i|
@@ -102,6 +123,10 @@ class MessengerBot
 		return image_url
 	end
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @return [nil].
+ 	# To get item name from the MENU_ITEMS object.
+ 	#
 	def self.get_item_text(item_name)
 		text = ""
 		MENU_ITEMS.each do |i|

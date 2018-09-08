@@ -1,5 +1,7 @@
-
+# @author Balaji
 class MessengerBot
+
+    # The receipt template body
     RECEIPT_TEMPLATE_BODY = {
       "attachment":{
         "type": "template",

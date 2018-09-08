@@ -1,4 +1,7 @@
+# @author Balaji
 class MessengerBot
+
+	# Greeting Message for the chatbot
 	GREETING = {
 		"greeting": [{
 			"locale": "default",

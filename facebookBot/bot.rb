@@ -22,9 +22,13 @@ require_relative './get_address'
 
 include Facebook::Messenger
 
+# @author Balaji
 class MessengerBot
 
-	# Method to create row in database user table
+	# @param id [Integer] The Facebook User ID.
+	# @return [nil].
+	# Method to create row in database user table.
+	#
 	def self.create_user(id)
 		profile = get_profile(id)
 		user = User.find_by_facebook_userid(id)
@@ -42,7 +46,10 @@ class MessengerBot
 		end
 	end
 
-	#Method to get user Facebook profile details
+	# @param id [Integer] The Facebook User ID.
+	# @return [JSON] A JSON object that contains first_name,lastname,profile_pic_url,locale,gender of the user.
+	# This method is used to get the user profile information from the Facebook.
+	#
 	def self.get_profile(id)
  		fb_profile_url = FB_PROFILE + id + FB_PROFILE_FIELDS
  		profile_details = HTTParty.get(fb_profile_url)
@@ -54,7 +61,11 @@ class MessengerBot
  		return profile_details
  	end
 
- 	#Method to push a message to Facebook
+ 	# @param recipient_id [Integer] The Facebook User ID.
+ 	# @param text [String] text want to be delivered to user.
+ 	# @return [nil].
+ 	# Method to send a message to Facebook user.
+ 	#
 	def self.say(recipient_id, text)
 		message_options = {
 			messaging_type: "RESPONSE",
@@ -64,7 +75,12 @@ class MessengerBot
 		HTTParty.post(FB_MESSAGE, headers: HEADER, body: message_options)
 	end
 
-	#To send a quick reply to user
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @param text [String] text want to be delivered before showing the quick reply options to the user.
+ 	# @param quick_reply [JSON] the quick reply object that need to be send.
+ 	# @return [nil].
+	# This method is to send a quick reply to the user.
+	#
 	def self.send_quick_reply(id,text,quick_reply)
 		message_options = {
 			messaging_type: "RESPONSE",
@@ -78,7 +94,10 @@ class MessengerBot
 
 	 end
 
-	#Typing indication:
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @return nil
+	# Typing indication
+	#
 	def self.typing_on(id)
 		message_options = {
 			messaging_type: "RESPONSE",
@@ -89,19 +108,16 @@ class MessengerBot
   	end
 
 
-	#Initial configuration for the bot 
+	# Initial configuration for the bot 
 	Facebook::Messenger::Subscriptions.subscribe(access_token: ENV["FB_ACCESS_TOKEN"])
 	greeting_response 		 =HTTParty.post(FB_PAGE,  headers: HEADER, body: GREETING.to_json )
 	get_started_response	 =HTTParty.post(FB_PAGE,  headers: HEADER, body: GET_STARTED.to_json)
 	persistent_menu_response =HTTParty.post(FB_PAGE, headers: HEADER, body: PERSISTENT_MENU.to_json)
 
-	#Triggers whenever a message has got
+	# Triggers whenever a message has got
 	Bot.on :message do |message|
 		id = message.sender["id"]
 		message_text = message.text
-		# if message.location_coordinates.size != 0 then
-		# 	send_receipt(id)
-		# end
 		user = User.find_by_facebook_userid(id)
 		step_number = user.step_number if user != nil
 
@@ -178,17 +194,26 @@ class MessengerBot
 		end
 	end
 
-	#Triggers whenever a postback happens
+	# Triggers whenever a postback happens
 	Bot.on :postback do |postback|
 		id = postback.sender["id"]
 		call_postback(id,postback.payload)
 	end
 
-	#Method to handle bot messages
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @param message_text [String] text present in user's message.
+ 	# @return [nil]
+	# Method to handle bot messages
+	#
 	def self.call_message(id,message_text)
 		typing_on(id)
 		get_profile(id)
-		case message_text.downcase
+		begin
+			message = message_text.downcase  # handle only text messages 
+		rescue   
+			message = "hi"
+		end
+		case message
 		when "hi"
 			say(id,"Hi #{@first_name} #{@last_name} glad to see you!")
 			send_quick_reply(id,"How can I help you?",QUICK_REPLIES)
@@ -196,13 +221,19 @@ class MessengerBot
 			say(id,"Here is the menu,")
 			send_menu(id)
 		else
-			handle_wit_response(id,message_text)
+			# calling handle_wit function to process the message text
+			handle_wit_response(id,message)
 		end
 		
 	end
 
-	#Method to handle wit response
+ 	# @param recipient_id [Integer] The Facebook User ID.
+ 	# @param text [String] message present in the user's message.
+ 	# @return [nil]
+	# Method to get wit response
+	#
 	def self.handle_wit_response(id,message_text)
+		# Calling function to get results from Wit.
 		wit_response = Wit.new.get_intent(message_text)
 		if wit_response.class == String then
 			call_postback(id,wit_response)
@@ -211,7 +242,11 @@ class MessengerBot
 		end
 	end
 
-	#Method to handle postbacks
+ 	# @param recipient_id [Integer] The Facebook User ID.
+ 	# @param postback_payload [String] postback payload.
+ 	# @return [nil]
+	# Method to handle postbacks
+	#
 	def self.call_postback(id,postback_payload)
 		typing_on(id)
 		user = User.find_by_facebook_userid(id)
@@ -276,6 +311,11 @@ class MessengerBot
 		user.save
 	end
 
+ 	# @param recipient_id [Integer] The Facebook User ID.
+ 	# @param text [String] text want to be delivered to user.
+ 	# @return [nil]
+ 	# Method to handle postbacks such as ADD_TO_CART,REMOVE_FROM_CART
+ 	#
 	def self.handle_cart_postbacks(id,postback_payload)
 		if postback_payload.include?("ADD_TO_CART_") then
 			item = postback_payload.gsub("ADD_TO_CART_","")
@@ -295,10 +335,15 @@ class MessengerBot
 		end
 	end
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @param entity [JSON] the entity returned by the Wit.
+ 	# @return [nil]
+ 	# Method to handle wit entity
+ 	#
 	def self.handle_wit_entity(id,entity)
-
 		user = User.find_by_facebook_userid(id)
 
+		# Handle entity with number object
 		if entity.has_key?("intent") && entity.has_key?("item") && entity.has_key?("number") then
 			quantity = entity["number"][0]["value"]
 			if entity["intent"][0]["value"] == "ADD_TO_CART" then 
@@ -325,6 +370,7 @@ class MessengerBot
 			user.step_number = "0"
 			user.save
 
+		# Handle entities that doesn't having number object
 		elsif entity.has_key?("intent") && entity.has_key?("item") then
 			if entity["intent"][0]["value"] == "ADD_TO_CART" then
 				item_to_add = entity["item"][0]["value"].split.map(&:capitalize).join(' ')
@@ -337,6 +383,7 @@ class MessengerBot
 			end
 			user.save
 
+		# Messages that couln't be processed will fall in this category
 		else
 			say(id,"Couldn't understand that!")
 		end

@@ -1,5 +1,7 @@
+# @author Balaji
 class MessengerBot
 
+ # quick replies object
  QUICK_REPLIES = [
     {
       "content_type": 'text',
@@ -18,14 +20,14 @@ class MessengerBot
     }
   ]
 
-
+  # Quick reply with location option
   QUICK_REPLIES_LOCATION = [
     {
       "content_type": 'location'
     }
   ]
 
-
+  # quick reply with place order options
   QUICK_REPLIES_ORDER = [
     {
     "content_type": 'text',
@@ -39,6 +41,7 @@ class MessengerBot
     }
   ]
 
+  # quick reply for confirmation of the order
   QUICK_REPLIES_CONFIRM_ORDER = [
     {
     "content_type": 'text',

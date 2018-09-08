@@ -1,7 +1,9 @@
 require_relative './bot'
 
+# @author Balaji
 class MessengerBot
 
+	# Menu items to be shown.
 	MENU_ITEMS =[
 		{
 		"title" => "Pizza",

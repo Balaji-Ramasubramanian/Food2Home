@@ -1,7 +1,12 @@
 require_relative './bot'
 
+# @author Balaji
 class MessengerBot
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @return [nil].
+ 	# Method to get address details from the user.
+ 	#
 	def self.get_address_details(id)
 		say(id,"Enter your phone number")
 		cart = Cart.find_by_facebook_userid(id)
@@ -14,10 +19,19 @@ class MessengerBot
 		user.save
 	end
 
+ 	# @param recipient_id [Integer] The Facebook User ID.
+ 	# @param text [String] text want to be delivered to user.
+ 	# @return [nil].
+ 	# Method to show confirmation message to the user.
+ 	#
 	def self.show_confirmation_message(id)
 		send_quick_reply(id,"Are you sure to place this Order?",QUICK_REPLIES_CONFIRM_ORDER)
 	end
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @return [nil].
+ 	# Method to cancel the user's food order. It makes cart items of the user as NULL.
+ 	#
 	def self.cancel_order(id)
 		user = User.find_by_facebook_userid(id)
 		user.step_number = "0"

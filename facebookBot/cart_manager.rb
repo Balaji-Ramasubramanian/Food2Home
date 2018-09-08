@@ -1,7 +1,13 @@
 require_relative './bot.rb'
 
+# @author Balaji
 class MessengerBot
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @param item [String] Food item which quantity value to be asked to the user.
+ 	# @return [nil].
+ 	# This metod is used to ask quantiy of a food item to the user.
+ 	#
 	def self.ask_quantity(id,item)
 		user = User.find_by_facebook_userid(id)
 		if user != nil then
@@ -11,7 +17,11 @@ class MessengerBot
 		end
 	end
 
-
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @param item_to_add [String] The food item that to be added in the cart.
+ 	# @return [nil].
+ 	# Mehod to add a item to the cart
+ 	#
 	def self.add_item_to_cart(id,item_to_add,quantity)
 		price = nil
 		MENU_ITEMS.each do |i|
@@ -58,6 +68,12 @@ class MessengerBot
 		end
 	end
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @param item_to_remove [String] The item to be removed from the cart.
+ 	# @param quantity [String] The quantity of the item to be removed.
+ 	# @return [nil].
+ 	# Method to remove item from the cart.
+ 	#
 	def self.remove_item_from_cart(id,item_to_remove,quantity = "remove_all")
 		cart = Cart.find_by_facebook_userid(id)
 		items_in_the_cart = cart.items_in_the_cart
@@ -90,6 +106,12 @@ class MessengerBot
 		end
 	end
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @param item_to_edit [String] The item which quantity to be edited.
+ 	# @param qty [String] The quantity of the item.
+ 	# @return [nil].
+ 	# Method to edit quantity of a food item.
+ 	#
 	def self.edit_quantity(id,item_to_edit,qty)
 		cart = Cart.find_by_facebook_userid(id)
 		items_in_the_cart = cart.items_in_the_cart

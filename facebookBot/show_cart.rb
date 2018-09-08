@@ -1,8 +1,13 @@
 require_relative './bot'
 require_relative './send_menu'
 
+# @author Balaji
 class MessengerBot
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @return [nil].
+ 	# Method show show the cart items to the user.
+ 	#
 	def self.show_cart(id)
 		template = GENERIC_TEMPLATE_BODY
 		elements = []
@@ -49,6 +54,10 @@ class MessengerBot
 		end
 	end
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @return [nil].
+ 	# Ask confirmation to the user.
+ 	#
 	def self.ask_confirmation(id)
 		send_quick_reply(id,"Would you like to place the order?",QUICK_REPLIES_ORDER)
 	end

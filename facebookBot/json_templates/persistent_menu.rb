@@ -1,5 +1,7 @@
+# @author Balaji
 class MessengerBot
-  
+
+  # Default Persistem menu object  
   PERSISTENT_MENU = {
     "persistent_menu": [
       {

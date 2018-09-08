@@ -1,8 +1,13 @@
 require_relative './menu'
 require_relative './bot'
 
+# @author Balaji
 class MessengerBot
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @return [nil].
+ 	# Method to show menu items to the user.
+ 	#
 	def self.send_menu(id)
 		template = GENERIC_TEMPLATE_BODY
 		elements = []
@@ -29,6 +34,11 @@ class MessengerBot
 		post_template(id,template)
 	end
 
+ 	# @param id [Integer] The Facebook User ID.
+ 	# @param template [JSON] The template which need to be sent to the user.
+ 	# @return [nil].
+ 	# Method to send template to the user.
+ 	#
 	def self.post_template(id,template)
 		message_options = {
 		"messaging_type": "RESPONSE",

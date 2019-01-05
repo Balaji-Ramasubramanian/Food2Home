@@ -1,15 +1,17 @@
 development:
   adapter: mysql2
   encoding: utf8
-  database: <%= ENV['DATABASE_NAME'] %>
+  # host: eu-cdbr-west-02.cleardb.net
+  database: order_food
   pool: 2
-  username: <%= ENV['DATABASE_USERNAME'] %>
-  password: <%= ENV['DATABASE_PASSWORD'] %>
+  username: root
+  password: 
 
 production:
   adapter: mysql2
   encoding: utf8
-  database: <%= ENV['DATABASE_NAME'] %>
+  # host: eu-cdbr-west-02.cleardb.net
+  database: order_food
   pool: 2
-  username: <%= ENV['DATABASE_USERNAME'] %>
-  password: <%= ENV['DATABASE_PASSWORD'] %>
+  username: root
+  password: 

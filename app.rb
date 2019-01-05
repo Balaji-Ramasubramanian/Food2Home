@@ -12,3 +12,7 @@ end
 get "/" do
   erb :home
 end
+
+get "/google84c3dbeaf9f4db10.html" do
+	erb :google_verify
+end

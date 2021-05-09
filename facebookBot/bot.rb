@@ -19,6 +19,7 @@ require_relative './send_receipt'
 require_relative './show_cart'
 require_relative './cart_manager'
 require_relative './get_address'
+require_relative './strings'
 
 include Facebook::Messenger
 
@@ -46,19 +47,38 @@ class MessengerBot
 		end
 	end
 
+	def self.get_profile_data(id)
+ 		fb_profile_url = FB_PROFILE + id + FB_PROFILE_FIELDS
+ 		return HTTParty.get(fb_profile_url)
+	end
 	# @param id [Integer] The Facebook User ID.
 	# @return [JSON] A JSON object that contains first_name,lastname,profile_pic_url,locale,gender of the user.
 	# This method is used to get the user profile information from the Facebook.
 	#
 	def self.get_profile(id)
- 		fb_profile_url = FB_PROFILE + id + FB_PROFILE_FIELDS
- 		profile_details = HTTParty.get(fb_profile_url)
+ 		profile_details = get_profile_data(id)
  		@first_name = profile_details["first_name"]
  		@last_name = profile_details["last_name"]
  		@profile_pic = profile_details["profile_pic"]
  		@locale = profile_details["locale"]
  		@gender = profile_details["gender"]
  		return profile_details
+ 	end
+
+  	# @param id [Integer] The Facebook User ID.
+ 	# @return [String] The language that the user had set in his/her Facebook profile.
+ 	# This method is used to get the language of the user set in the Facebook.
+ 	#
+ 	def self.get_language(id)
+ 		profile_details = get_profile_data(id)
+ 		locale = profile_details["locale"]
+ 		language = (locale == nil)? "en" : locale[0,2]
+ 		return language
+ 	end
+
+ 	def self.set_language_value(id)
+		@language = get_language(id)
+		@language = "en" unless SUPPORTED_LANGUAGE.include?(@language)
  	end
 
  	# @param recipient_id [Integer] The Facebook User ID.
@@ -120,6 +140,9 @@ class MessengerBot
 		id = message.sender["id"]
 		message_text = message.text
 		user = User.find_by_facebook_userid(id)
+		if user == nil
+			create_user(id)
+		end
 		step_number = user.step_number if user != nil
 
 		if step_number.include?("1") then
@@ -133,7 +156,7 @@ class MessengerBot
 			edit_quantity(id,item,message_text) if message_text !~ /\D/
 
 		elsif  step_number.include?("3") then
-			say(id,"Please enter a valid phone number!") unless message_text  !~ /\D/ && message_text.length == 10
+			say(id,"Phone number should contain 10 digit numeric values. Please enter a valid phone number!") unless message_text  !~ /\D/ && message_text.length == 10
 			if message_text  !~ /\D/ && message_text.length == 10 then
 				phone_number = message_text
 				cart = Cart.find_by_facebook_userid(id)
@@ -251,6 +274,9 @@ class MessengerBot
 	def self.call_postback(id,postback_payload)
 		typing_on(id)
 		user = User.find_by_facebook_userid(id)
+		if user == nil
+			create_user(id) 
+		end
 		case postback_payload
 		when "GET_STARTED"
 			get_profile(id)
@@ -343,7 +369,9 @@ class MessengerBot
  	#
 	def self.handle_wit_entity(id,entity)
 		user = User.find_by_facebook_userid(id)
-
+		if user == nil
+			create_user(id) 
+		end
 		# Handle entity with number object
 		if entity.has_key?("intent") && entity.has_key?("item") && entity.has_key?("number") then
 			quantity = entity["number"][0]["value"]
